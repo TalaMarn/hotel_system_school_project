@@ -17,3 +17,14 @@ class Room(models.Model):
     
     def __str__(self):
         return self.roomNo
+    
+class Profile(models.Model):
+    Role_CHOICES = [
+        ('Customer', 'Customer'),
+        ('Staff', 'Staff'),
+    ]
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.CharField(max_length=10, choices=Role_CHOICES, default='Customer')
+    
+    def __str__(self):
+        return self.user.username

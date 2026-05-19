@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
-from .models import Room
+from .models import Room, Profile
+from .forms import LoginForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
 # Create your views here.
@@ -47,7 +48,35 @@ def login_view(request):
             return redirect('customer_dashboard')
         messages.error(request, 'Invalid username or password.')
 
-    return render(request, 'login.html')
+    form = LoginForm()
+
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+
+        if form.is_valid():
+            user = authenticate(
+                request,
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password']
+            )
+
+            if user:
+                login(request, user)
+
+                # STAFF (admin user)
+                if user.is_staff:
+                    return redirect('dashboard')
+
+                profile = Profile.objects.filter(user=user).first()
+
+                if profile and profile.role == "teacher":
+                    return redirect('teacher_dashboard')
+
+                return redirect('student_dashboard')
+
+
+
+    return render(request, 'login.html', {'form': form})
 
 def register_view(request):
     if request.method == 'POST':
@@ -73,9 +102,14 @@ def register_view(request):
 
     return render(request, 'register.html')
 
+@login_required
 def roomList(request):
     rooms = Room.objects.all()
     context = {
         'rooms': rooms,
     }
     return render(request, 'room_list.html', context)
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')

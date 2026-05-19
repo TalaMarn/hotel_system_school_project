@@ -50,6 +50,9 @@
     }
   </style>
   <body>
+
+    <!-- Navbar -->
+
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
         <img
@@ -77,13 +80,13 @@
               <a
                 class="nav-link active"
                 aria-current="page"
-                href="{% url 'hotel_welcome' %}"
+                href="{% url 'customer_dashboard' %}"
                 style="color: #e6b31e"
                 >Home</a
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#" style="color: #e6b41ea3">Rooms</a>
+              <a class="nav-link" href="{% url 'room_list' %}" style="color: #e6b41ea3">Rooms</a>
             </li>
             <li class="nav-item dropdown">
               <a
@@ -114,10 +117,18 @@
               >
             </li>
           </ul>
-          <a class="btn btn-outline-warning ms-2 m-2 mb-0 mt-0" href="{% url 'customer_dashboard' %}">{{ user.username }}</a>
+          {% if user.is_authenticated %}
+          <a class="nav-link m-2 mb-0 mt-0" href="#" style="color: #e6b31e;">Hi, {{ user.username }}</a>
           <a class="btn btn-warning" href="{% url 'logout' %}">Logout</a>
+          {% else %}
+          <a class="btn btn-warning-outline m-2 mb-0 mt-0" href="{% url 'login' %}" style="color: #e6b31e;">Login</a>
+          <a class="btn btn-warning" href="{% url 'register' %}">Register</a>
+          {% endif %}
           
     </nav>
+
+    <!-- Hero Section -->
+
     <section
       class="hero-section container py-5 px-4 d-flex align-items-center flex-wrap rounded"
     >
@@ -149,20 +160,32 @@
       </div>
     </section>
 
+    <!-- Rooms Section -->
+
     <section class="room-section container flex-wrap rounded">
       <h2 class="text-center mb-4" style="color: #e6b31e">Our Rooms</h2>
       <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        {% if user.is_authenticated %}
+        <a
+          type="button"
+          href="{% url 'room_list' %}"
+          class="btn btn-outline-warning mb-3"
+        >
+          View All ->
+        </a>
+        {% else %}
         <a
           type="button"
           href="{% url 'login' %}"
           class="btn btn-outline-warning mb-3"
         >
-          View All ->
+          Login to View Rooms ->
         </a>
+        {% endif %}
       </div>
       <div class="card-group">
         {% for room in rooms %}
-        <div class="card">
+        <div class="card col-md-3">
           {% if room.roomPic %}
           <img
             src="{{ room.roomPic.url }}"

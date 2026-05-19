@@ -18,6 +18,22 @@ class Room(models.Model):
     def __str__(self):
         return self.roomNo
     
+class Booking(models.Model):
+
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+
+    customer_name = models.CharField(max_length=100)
+
+    email = models.EmailField()
+
+    check_in = models.DateField()
+
+    check_out = models.DateField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+
 class Profile(models.Model):
     Role_CHOICES = [
         ('Customer', 'Customer'),

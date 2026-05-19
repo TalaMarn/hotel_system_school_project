@@ -1,6 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Room, Profile
-from .forms import LoginForm
+from .forms import LoginForm,RegisterForm, BookingForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -9,15 +9,8 @@ from django.contrib import messages
 # Create your views here.
 
 # Welcome View
-def hotel_welcome(request):
-    rooms = Room.objects.all().order_by('id')[:3]
-    context = {
-        'rooms': rooms,
-    }
 
-    return render(request, 'hotel_welcome.html', context)
 
-@login_required
 def customer_dashboard(request):
     rooms = Room.objects.all().order_by('id')[:3]
     context = {
@@ -102,13 +95,51 @@ def register_view(request):
 
     return render(request, 'register.html')
 
+
+
 @login_required
 def roomList(request):
-    rooms = Room.objects.all()
+    rooms = Room.objects.filter(isAvailable=True)
     context = {
         'rooms': rooms,
     }
     return render(request, 'room_list.html', context)
+
+def booking_view(request, room_id):
+
+    room = get_object_or_404(Room, id=room_id)
+
+    # Prevent booking unavailable room
+    if not room.is_available:
+        return render(request, '404.html')
+
+    if request.method == 'POST':
+
+        form = BookingForm(request.POST)
+
+        if form.is_valid():
+
+            booking = form.save(commit=False)
+
+            # connect selected room
+            booking.room = room
+
+            # save booking
+            booking.save()
+
+            # update room status
+            room.is_available = False
+            room.save()
+
+            return redirect('success')
+
+    else:
+        form = BookingForm()
+
+    return render(request, 'booking.html', {
+        'form': form,
+        'room': room
+    })
 
 def logout_view(request):
     logout(request)

@@ -1,0 +1,19 @@
+<!-- booking.html -->
+
+<!doctype html>
+<html>
+  <head>
+    <title>Booking Form</title>
+  </head>
+  <body>
+    <h1>Room Booking</h1>
+    <h2>Room: {{ room.roomNo }} - {{ room.roomType }}</h2>
+    <p>Price: ${{ room.price }}</p>
+
+    <form method="POST">
+      {% csrf_token %} {{ form.as_p }}
+
+      <button type="submit">Book Now</button>
+    </form>
+  </body>
+</html>

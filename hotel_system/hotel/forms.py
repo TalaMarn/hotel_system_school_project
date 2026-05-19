@@ -1,5 +1,5 @@
 from django import forms
-from .models import Profile
+from .models import Profile, Booking
 from django.contrib.auth.models import User
 
 class LoginForm(forms.Form):
@@ -48,3 +48,14 @@ class RegisterForm(forms.ModelForm):
 
             }
         )
+
+class BookingForm(forms.ModelForm):
+    class Meta:
+        model = Booking
+        fields = ['customer_name', 'email', 'check_in', 'check_out']
+
+    customer_name = forms.CharField(max_length=100)
+    email = forms.EmailField()
+    check_in = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    check_out = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    guests = forms.IntegerField(min_value=1)

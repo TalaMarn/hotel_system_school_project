@@ -52,10 +52,18 @@ class RegisterForm(forms.ModelForm):
 class BookingForm(forms.ModelForm):
     class Meta:
         model = Booking
-        fields = ['customer_name', 'email', 'check_in', 'check_out']
+        fields = ['customer_name', 'email', 'check_in', 'check_out', 'special_request', 'recipt']
 
     customer_name = forms.CharField(max_length=100)
     email = forms.EmailField()
     check_in = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
     check_out = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
-    guests = forms.IntegerField(min_value=1)
+    guests = forms.IntegerField(min_value=1, max_value=5)
+    special_request = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={
+            'rows': 4,
+            'placeholder': 'Any special requests?'
+        })
+    )
+    recipt = forms.ImageField(required=True)

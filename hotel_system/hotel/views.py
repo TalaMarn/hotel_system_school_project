@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Room, Profile
-from .forms import LoginForm,RegisterForm, BookingForm
+from .models import Room
+from .forms import LoginForm, BookingForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -29,21 +29,9 @@ def staff_dashboard(request):
     return render(request, 'staff_dashboard.html', context)
 
 def login_view(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            login(request, user)
-            if user.is_staff:
-                return redirect('staff_dashboard')
-            return redirect('customer_dashboard')
-        messages.error(request, 'Invalid username or password.')
-
     form = LoginForm()
 
-    if request.method == "POST":
+    if request.method == 'POST':
         form = LoginForm(request.POST)
 
         if form.is_valid():
@@ -55,19 +43,10 @@ def login_view(request):
 
             if user:
                 login(request, user)
-
-                # STAFF (admin user)
                 if user.is_staff:
-                    return redirect('dashboard')
-
-                profile = Profile.objects.filter(user=user).first()
-
-                if profile and profile.role == "teacher":
-                    return redirect('teacher_dashboard')
-
-                return redirect('student_dashboard')
-
-
+                    return redirect('staff_dashboard')
+                return redirect('customer_dashboard')
+            messages.error(request, 'Invalid username or password.')
 
     return render(request, 'login.html', {'form': form})
 
@@ -110,12 +89,12 @@ def booking_view(request, room_id):
     room = get_object_or_404(Room, id=room_id)
 
     # Prevent booking unavailable room
-    if not room.is_available:
+    if not room.isAvailable:
         return render(request, '404.html')
 
     if request.method == 'POST':
 
-        form = BookingForm(request.POST)
+        form = BookingForm(request.POST, request.FILES)
 
         if form.is_valid():
 
@@ -128,7 +107,7 @@ def booking_view(request, room_id):
             booking.save()
 
             # update room status
-            room.is_available = False
+            room.isAvailable = False
             room.save()
 
             return redirect('success')
@@ -136,7 +115,7 @@ def booking_view(request, room_id):
     else:
         form = BookingForm()
 
-    return render(request, 'booking.html', {
+    return render(request, 'booking_page.html', {
         'form': form,
         'room': room
     })

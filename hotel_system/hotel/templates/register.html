@@ -72,64 +72,50 @@
       {% if messages %}
       <div class="mb-3 text-start">
         {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}" role="alert">
+        <div
+          class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %}"
+          role="alert"
+        >
           {{ message }}
         </div>
         {% endfor %}
+      </div>
+      {% endif %} {% if form.non_field_errors %}
+      <div class="alert alert-danger text-start" role="alert">
+        {{ form.non_field_errors }}
       </div>
       {% endif %}
       <form method="POST">
         {% csrf_token %}
         <div class="row">
           <div class="col-md-6 mb-3 text-start">
-            <label for="username" class="form-label">Username</label>
-            <input
-              type="text"
-              name="username"
-              class="form-control"
-              id="username"
-              required
-            />
+            <label for="username" class="form-label"
+              >{{ form.username.label_tag }}</label
+            >
+            {{ form.username }} {{ form.username.errors }}
           </div>
           <div class="col-md-6 mb-3 text-start">
-            <label for="email" class="form-label">Email</label>
-            <input
-              type="email"
-              name="email"
-              class="form-control"
-              id="email"
-              required
-            />
+            <label for="email" class="form-label"
+              >{{ form.email.label_tag }}</label
+            >
+            {{ form.email }} {{ form.email.errors }}
           </div>
         </div>
         <div class="mb-3 text-start">
           <label for="role" class="form-label">Register as</label>
-          <select name="role" class="form-select" id="role">
-            <option value="customer">Customer</option>
-            <option value="staff">Hotel Staff</option>
-          </select>
+          {{ form.role }} {{ form.role.errors }}
         </div>
         <div class="mb-3 text-start">
-          <label for="password" class="form-label">Password</label>
-          <input
-            type="password"
-            name="password"
-            class="form-control"
-            id="password"
-            required
-          />
+          <label for="password" class="form-label"
+            >{{ form.password.label_tag }}</label
+          >
+          {{ form.password }} {{ form.password.errors }}
         </div>
         <div class="mb-4 text-start">
           <label for="confirm_password" class="form-label"
             >Confirm Password</label
           >
-          <input
-            type="password"
-            name="confirm_password"
-            class="form-control"
-            id="confirm_password"
-            required
-          />
+          {{ form.confirm_password }} {{ form.confirm_password.errors }}
         </div>
         <button type="submit" class="btn btn-warning w-100 mb-3">
           Register

@@ -71,15 +71,7 @@
         class="mb-4"
       />
       <h2 class="mb-4">Login</h2>
-      {% if messages %}
-      <div class="mb-3 text-start">
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}" role="alert">
-          {{ message }}
-        </div>
-        {% endfor %}
-      </div>
-      {% endif %}
+
       <form method="POST">
         {% csrf_token %}
         <div class="mb-3 text-start">
@@ -90,6 +82,15 @@
           <label for="password" class="form-label">Password</label>
           <div class="input-group">{{ form.password }}</div>
         </div>
+        {% if messages %}
+        <div class="mb-3 center">
+          {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}" role="alert">
+            {{ message }}
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
         <button type="submit" class="btn btn-warning w-100 mb-3">
           Sign In
         </button>

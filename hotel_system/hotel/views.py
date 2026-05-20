@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Room
-from .forms import LoginForm, BookingForm
+from .forms import LoginForm, BookingForm , RegisterForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -51,28 +51,33 @@ def login_view(request):
     return render(request, 'login.html', {'form': form})
 
 def register_view(request):
+    form = RegisterForm()
+
     if request.method == 'POST':
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        role = request.POST.get('role')
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
+        form = RegisterForm(request.POST)
 
-        if password != confirm_password:
-            messages.error(request, 'Passwords do not match.')
-        elif User.objects.filter(username=username).exists():
-            messages.error(request, 'That username is already taken.')
-        elif User.objects.filter(email=email).exists():
-            messages.error(request, 'An account with that email already exists.')
-        else:
-            user = User.objects.create_user(username=username, email=email, password=password)
-            if role == 'staff':
-                user.is_staff = True
-                user.save()
-            messages.success(request, 'Account created successfully. Please log in.')
-            return redirect('login')
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            role = form.cleaned_data['role']
+            password = form.cleaned_data['password']
+            confirm_password = form.cleaned_data['confirm_password']
 
-    return render(request, 'register.html')
+            if User.objects.filter(username=username).exists():
+                messages.error(request, 'That username is already taken.')
+            elif User.objects.filter(email=email).exists():
+                messages.error(request, 'An account with that email already exists.')
+            elif password != confirm_password:
+                messages.error(request, 'Passwords do not match.')
+            else:
+                user = User.objects.create_user(username=username, email=email, password=password)
+                if role == 'Staff':
+                    user.is_staff = True
+                    user.save()
+                messages.success(request, 'Account created successfully. Please log in.')
+                return redirect('login')
+
+    return render(request, 'register.html', {'form': form})
 
 
 

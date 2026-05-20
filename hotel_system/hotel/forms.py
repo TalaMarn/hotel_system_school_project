@@ -16,38 +16,46 @@ class LoginForm(forms.Form):
                 }))
 
 class RegisterForm(forms.ModelForm):
-    password = forms.CharField( widget=forms.PasswordInput(attrs={
-                 'class':'form-control',
-                 'placeholder':'Password'
-
-                }))
-    role = forms.ChoiceField(
-        choices=Profile.Role_CHOICES,
-        widget=forms.Select(attrs={
-            'class':'form-control'
-        })
-    )
     class Meta:
-        model = User 
-        fields = ['username', 'email','password']
-    
-    def __init__(self,  *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        model = User
+        fields = ['username', 'email', 'password']
 
-        self.fields['username'].widget.attrs.update(
-            {
-                'class':'form-control',
-                 'placeholder':'User Name'
+    ROLE_CHOICES = [
+        ('Customer', 'Customer'),
+        ('Staff', 'Staff'),
+    ]
+    username = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Username'
+    }))
 
-            }
-        )
-        self.fields['email'].widget.attrs.update(
-            {
-                'class':'form-control',
-                'placeholder':'Email'
+    email = forms.EmailField(widget=forms.EmailInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Email'
+    }))
 
-            }
-        )
+    role = forms.ChoiceField(choices=ROLE_CHOICES, widget=forms.Select(attrs={
+        'class': 'form-select',
+        'placeholder': 'Select Role'
+    }))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Password'
+    }))
+
+    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Confirm Password'
+    }))
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        confirm_password = cleaned_data.get('confirm_password')
+
+        if password and confirm_password and password != confirm_password:
+            self.add_error('confirm_password', 'Passwords do not match.')
+        return cleaned_data
 
 class BookingForm(forms.ModelForm):
     class Meta:

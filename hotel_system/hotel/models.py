@@ -18,18 +18,6 @@ class Room(models.Model):
     def __str__(self):
         return self.roomNo
     
-class Booking(models.Model):
-
-    room = models.ForeignKey(Room, on_delete=models.CASCADE)
-    customer_name = models.CharField(max_length=100)
-    email = models.EmailField()
-    check_in = models.DateField()
-    check_out = models.DateField()
-    special_request = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    recipt = models.ImageField(upload_to='Recipt_Img/', null=True, blank=True)
-    booking_status = models.CharField(max_length=20, default='Pending')
-
 
 
 class Profile(models.Model):
@@ -42,3 +30,15 @@ class Profile(models.Model):
     
     def __str__(self):
         return self.user.username
+
+class Booking(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    customer_name = models.CharField(max_length=100)
+    email = models.EmailField()
+    check_in = models.DateField()
+    check_out = models.DateField()
+    special_request = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    recipt = models.ImageField(upload_to='Recipt_Img/', null=True, blank=True)
+    booking_status = models.CharField(max_length=20, default='Pending')

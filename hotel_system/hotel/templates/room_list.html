@@ -12,6 +12,10 @@
       integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
       crossorigin="anonymous"
     />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
   </head>
   <style>
     body {
@@ -36,94 +40,72 @@
       font-size: 1.2rem;
       margin-top: 20px;
     }
+    /* Search box styling */
+    .search-box .form-control {
+      background-color: #2a2a2a; /* dark input bg */
+      color: #f6e7b8; /* light/golden text */
+      border: 1px solid #454545;
+    }
+    .search-box .form-control::placeholder {
+      color: #cbbf86;
+      opacity: 1;
+    }
+    .search-box .input-group-text {
+      background-color: #343434;
+      color: #e6b31e;
+      border: 1px solid #454545;
+    }
+    .search-box .form-control:focus {
+      background-color: #2d2d2d;
+      color: #e6b31e;
+      border-color: #e6b31e;
+      box-shadow: 0 0 0 0.25rem rgba(230, 179, 30, 0.25);
+    }
+    .pagination .page-link {
+      background-color: #343434;
+      border-color: #454545;
+      color: #e6b31e;
+    }
+    .pagination .page-link:hover {
+      background-color: #e6b31e;
+      border-color: #e6b31e;
+      color: #161617;
+    }
+    .pagination .active .page-link {
+      background-color: #e6b31e;
+      border-color: #e6b31e;
+      color: #161617;
+      font-weight: 700;
+    }
+    .pagination .disabled .page-link {
+      background-color: #282828;
+      border-color: #3d3d3d;
+      color: #746436;
+    }
   </style>
   <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-      <div class="container-fluid">
-        <img
-          src="{% static 'photos/Logo.png' %}"
-          alt="Hotel Logo"
-          width="63"
-          height="42"
-          class="d-inline-block align-text-top"
-        />
-        <a class="navbar-brand" href="#" style="color: #e6b31e">Arthy Hotel</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a
-                class="nav-link active"
-                aria-current="page"
-                href="{% url 'customer_dashboard' %}"
-                style="color: #e6b41ea3"
-                >Home</a
-              >
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                href="{% url 'room_list' %}"
-                style="color: #e6b31e"
-                >Rooms</a
-              >
-            </li>
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-                style="color: #e6b41ea3"
-              >
-                Dropdown
-              </a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a class="dropdown-item" href="#">Another action</a></li>
-                <li><hr class="dropdown-divider" /></li>
-                <li>
-                  <a class="dropdown-item" href="#">Something else here</a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link disabled"
-                aria-disabled="true"
-                style="color: #e6b41e3c"
-                >Disabled</a
-              >
-            </li>
-          </ul>
-          {% if user.is_authenticated %}
-          <a class="nav-link m-2 mb-0 mt-0" href="#" style="color: #e6b31e"
-            >Hi, {{ user.username }}</a
-          >
-          <a class="btn btn-warning" href="{% url 'logout' %}">Logout</a>
-          {% else %}
-          <a class="btn btn-warning" href="{% url 'login' %}">Login</a>
-          <a class="btn btn-warning-outline" href="{% url 'register' %}"
-            >Register</a
-          >
-          {% endif %}
-        </div>
-      </div>
-    </nav>
+    {% include 'navbar.html' %}
     <h2 class="text-center mt-4 mb-4" style="color: #fcfaf1">Rooms</h2>
+    <!--Search Bar-->
+    <form method="GET" class="mb-3">
+      <div
+        class="input-group search-box"
+        style="max-width: 400px; margin: 0 auto"
+      >
+        <span class="input-group-text">
+          <i class="bi bi-search"></i>
+        </span>
+        <input
+          type="text"
+          name="q"
+          class="form-control"
+          placeholder="Search rooms... (Family-F, Medium-M, Single-S)"
+          value="{{ query }}"
+        />
+      </div>
+    </form>
     <div class="row row-cols-1 row-cols-md-3 g-4 p-3">
-      {% for room in rooms %}
+      {% for room in page_obj %}
       <div class="col">
         <div
           class="card h-100"
@@ -154,9 +136,85 @@
           </div>
         </div>
       </div>
+      {% empty %}
+      <div class="text" style="color: #e6b31e">No rooms found.</div>
       {% endfor %}
     </div>
+    {% if page_obj.paginator.num_pages > 1 %}
+    <nav aria-label="Room list pages">
+      <div class="d-flex justify-content-center mt-4">
+        <ul class="pagination">
+          {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a
+              class="page-link"
+              href="?q={{ query }}&page=1"
+              aria-label="First"
+            >
+              First
+            </a>
+          </li>
+          <li class="page-item">
+            <a
+              class="page-link"
+              href="?q={{ query }}&page={{ page_obj.previous_page_number }}"
+              aria-label="Previous"
+            >
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">First</span>
+          </li>
+          <li class="page-item disabled">
+            <span class="page-link" aria-hidden="true">&laquo;</span>
+          </li>
+          {% endif %}
 
+          {% for num in page_numbers %}
+          {% if page_obj.number == num %}
+          <li class="page-item active">
+            <span class="page-link">{{ num }}</span>
+          </li>
+          {% else %}
+          <li class="page-item">
+            <a class="page-link" href="?q={{ query }}&page={{ num }}">{{ num }}</a>
+          </li>
+          {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+          <li class="page-item">
+            <a
+              class="page-link"
+              href="?q={{ query }}&page={{ page_obj.next_page_number }}"
+              aria-label="Next"
+            >
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+          <li class="page-item">
+            <a
+              class="page-link"
+              href="?q={{ query }}&page={{ page_obj.paginator.num_pages }}"
+              aria-label="Last"
+            >
+              Last
+            </a>
+          </li>
+          {% else %}
+          <li class="page-item disabled">
+            <span class="page-link" aria-hidden="true">&raquo;</span>
+          </li>
+          <li class="page-item disabled">
+            <span class="page-link">Last</span>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+    {% endif %}
     <!-- Footer -->
     <footer class="text-center mt-5 mb-3" style="color: #e6b31e">
       &copy; 2026 Arthy Hotel. All rights reserved.

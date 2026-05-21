@@ -347,7 +347,8 @@
         color: #fff;
         background:
           linear-gradient(0deg, rgba(22, 22, 23, 0.8), rgba(22, 22, 23, 0.16)),
-          url("{% if room.roomPic %}{{ room.roomPic.url }}{% else %}{% static 'photos/default_room.jpg' %}{% endif %}") center / cover;
+          url("{% if room.roomPic %}{{ room.roomPic.url }}{% else %}{% static 'photos/default_room.jpg' %}{% endif %}")
+            center / cover;
       }
 
       .summary-image h3 {
@@ -443,45 +444,7 @@
     </style>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-      <div class="container-fluid">
-        <img
-          src="{% static 'photos/Logo.png' %}"
-          alt="Hotel Logo"
-          width="63"
-          height="42"
-          class="d-inline-block align-text-top"
-        />
-        <a class="navbar-brand" href="{% url 'customer_dashboard' %}">Arthy Hotel</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'customer_dashboard' %}">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'room_list' %}">Rooms</a>
-            </li>
-          </ul>
-          {% if user.is_authenticated %}
-          <span class="nav-link m-2 mb-0 mt-0">Hi, {{ user.username }}</span>
-          <a class="btn btn-warning" href="{% url 'logout' %}">Logout</a>
-          {% else %}
-          <a class="btn btn-warning" href="{% url 'login' %}">Login</a>
-          {% endif %}
-        </div>
-      </div>
-    </nav>
+    {% include 'navbar.html' %}
 
     <main class="booking-shell">
       <header class="booking-header">
@@ -506,40 +469,39 @@
           <section class="form-section" aria-labelledby="guestTitle">
             <div class="section-title">
               <h2 id="guestTitle">Customer information</h2>
-              <p class="section-note">Use the name and email for this hotel booking.</p>
+              <p class="section-note">
+                Use the name and email for this hotel booking.
+              </p>
             </div>
 
             <div class="form-grid">
               <div>
-                {{ form.customer_name.label_tag }}
-                {{ form.customer_name }}
-                {{ form.customer_name.errors }}
+                {{ form.customer_name.label_tag }} {{ form.customer_name }} {{
+                form.customer_name.errors }}
               </div>
               <div>
-                {{ form.email.label_tag }}
-                {{ form.email }}
-                {{ form.email.errors }}
+                {{ form.email.label_tag }} {{ form.email }} {{ form.email.errors
+                }}
               </div>
               <div>
-                {{ form.check_in.label_tag }}
-                {{ form.check_in }}
-                {{ form.check_in.errors }}
+                {{ form.check_in.label_tag }} {{ form.check_in }} {{
+                form.check_in.errors }}
               </div>
               <div>
-                {{ form.check_out.label_tag }}
-                {{ form.check_out }}
-                {{ form.check_out.errors }}
+                {{ form.check_out.label_tag }} {{ form.check_out }} {{
+                form.check_out.errors }}
               </div>
               <div>
-                {{ form.guests.label_tag }}
-                {{ form.guests }}
-                {{ form.guests.errors }}
+                {{ form.guests.label_tag }} {{ form.guests }} {{
+                form.guests.errors }}
               </div>
               <div class="full">
-                {{ form.special_request.label_tag }}
-                {{ form.special_request }}
+                {{ form.special_request.label_tag }} {{ form.special_request }}
                 {{ form.special_request.errors }}
-                <p class="hint">Examples: airport pickup, extra bed, late check-in, or dietary notes.</p>
+                <p class="hint">
+                  Examples: airport pickup, extra bed, late check-in, or dietary
+                  notes.
+                </p>
               </div>
             </div>
           </section>
@@ -547,29 +509,47 @@
           <section class="form-section" aria-labelledby="paymentTitle">
             <div class="section-title">
               <h2 id="paymentTitle">Payment receipt</h2>
-              <p class="section-note">Attach the transfer slip or receipt image for staff verification.</p>
+              <p class="section-note">
+                Attach the transfer slip or receipt image for staff
+                verification.
+              </p>
             </div>
 
             <div class="upload-zone">
               <div>
                 <span class="upload-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <path d="M17 8 12 3 7 8"></path>
                     <path d="M12 3v12"></path>
                   </svg>
                 </span>
                 {{ form.recipt }}
-                <label class="file-trigger" for="{{ form.recipt.id_for_label }}">Select receipt</label>
+                <label class="file-trigger" for="{{ form.recipt.id_for_label }}"
+                  >Select receipt</label
+                >
                 {{ form.recipt.errors }}
-                <p class="hint">JPG, PNG, or WEBP image receipts are accepted.</p>
-                <div class="receipt-preview" id="receiptPreview" aria-live="polite"></div>
+                <p class="hint">
+                  JPG, PNG, or WEBP image receipts are accepted.
+                </p>
+                <div
+                  class="receipt-preview"
+                  id="receiptPreview"
+                  aria-live="polite"
+                ></div>
               </div>
             </div>
           </section>
 
           <div class="actions">
-            <a class="btn-outline-gold" href="{% url 'room_list' %}">Back to rooms</a>
+            <a class="btn-outline-gold" href="{% url 'room_list' %}"
+              >Back to rooms</a
+            >
             <button class="btn-gold" type="submit">Submit Booking</button>
           </div>
         </form>
@@ -602,7 +582,6 @@
         </aside>
       </section>
     </main>
-
     <footer class="text-center mt-2 mb-3">
       &copy; 2026 Arthy Hotel. All rights reserved.
       <br />

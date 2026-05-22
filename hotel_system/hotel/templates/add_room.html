@@ -57,48 +57,28 @@
     {% include 'navbar.html' %}
 
     <!-- Main Section -->
-    <div class="container">
-      <div class="hero-section">
-        <h1>Booking History</h1>
-        <p>Review your past bookings and download your booking slips.</p>
+    <section class="add-room-section">
+      <div
+        class="container"
+        style="
+          background-color: #343434;
+          padding: 30px;
+          border-radius: 10px;
+          margin-top: 30px;
+        "
+      >
+        <h1 class="mb-4">Add New Room</h1>
+        <form
+          method="post"
+          enctype="multipart/form-data"
+          class="mx-auto"
+          style="max-width: 400px"
+        >
+          {% csrf_token %} {{ form.as_p }}
+          <button type="submit" class="btn btn-warning mt-3">Add Room</button>
+        </form>
       </div>
-
-      <div class="room-section mt-4">
-        {% if bookings %}
-        <div class="list-group">
-          {% for booking in bookings %}
-          <div
-            class="list-group-item mb-3"
-            style="
-              background-color: #282828;
-              border: 1px solid #444;
-              color: #e6b31e;
-              border-radius: 5px;
-            "
-          >
-            <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1">
-                {{ booking.room.roomNo }} - {{ booking.room.roomType }}
-              </h5>
-              <h5>status: {{ booking.booking_status}}</h5>
-              <small>{{ booking.created_at|date:"F j, Y, g:i a" }}</small>
-            </div>
-            <p class="mb-1">
-              Customer: {{ booking.customer_name }} ({{ booking.email }})
-            </p>
-            <a
-              href="{% url 'booking_slip' booking.id %}"
-              class="btn btn-warning btn-sm mt-2"
-              >Download Booking Slip</a
-            >
-          </div>
-          {% endfor %}
-        </div>
-        {% else %}
-        <p>You have no past bookings.</p>
-        {% endif %}
-      </div>
-    </div>
+    </section>
 
     <!-- Footer -->
     <footer class="text-center mt-5 mb-3" style="color: #e6b31e">

@@ -1,43 +1,20 @@
 from django import forms
-from .models import Profile, Booking
+from .models import Profile, Booking, Room
 from django.contrib.auth.models import User
 
 class LoginForm(forms.Form):
-
     username = forms.CharField( widget=forms.TextInput(attrs={
-                 'class':'form-control',
-                 'placeholder':'User Name'
+                'class':'form-control',
+                'placeholder':'User Name'
 
                 }))
     password = forms.CharField( widget=forms.PasswordInput(attrs={
-                 'class':'form-control',
-                 'placeholder':'Password'
+                'class':'form-control',
+                'placeholder':'Password'
 
                 }))
 
 class RegisterForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password']
-
-    ROLE_CHOICES = [
-        ('Customer', 'Customer'),
-        ('Staff', 'Staff'),
-    ]
-    username = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'Username'
-    }))
-
-    email = forms.EmailField(widget=forms.EmailInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'Email'
-    }))
-
-    role = forms.ChoiceField(choices=ROLE_CHOICES, widget=forms.Select(attrs={
-        'class': 'form-select',
-        'placeholder': 'Select Role'
-    }))
     password = forms.CharField(widget=forms.PasswordInput(attrs={
         'class': 'form-control',
         'placeholder': 'Password'
@@ -56,6 +33,37 @@ class RegisterForm(forms.ModelForm):
         if password and confirm_password and password != confirm_password:
             self.add_error('confirm_password', 'Passwords do not match.')
         return cleaned_data
+    
+    role = forms.ChoiceField(
+        choices=Profile.Role_CHOICES,
+        widget=forms.Select(attrs={
+            'class':'form-control'
+        })
+    )
+    
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password']
+
+    def __init__(self,  *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['username'].widget.attrs.update(
+            {
+                'class':'form-control',
+                'placeholder':'User Name'
+
+            }
+        )
+        self.fields['email'].widget.attrs.update(
+            {
+                'class':'form-control',
+                'placeholder':'Email'
+
+            }
+        )
+
 
 class BookingForm(forms.ModelForm):
     class Meta:
@@ -75,3 +83,8 @@ class BookingForm(forms.ModelForm):
         })
     )
     recipt = forms.ImageField(required=True)
+
+class RoomForm(forms.ModelForm):
+    class Meta:
+        model = Room
+        fields = ['roomNo', 'roomType', 'price', 'roomPic']

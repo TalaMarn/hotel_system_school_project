@@ -5,7 +5,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Booking, Room
-from .forms import LoginForm, BookingForm , RegisterForm
+from .forms import LoginForm, BookingForm , RegisterForm, RoomForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -282,6 +282,32 @@ def roomList(request):
         'page_numbers': page_numbers,
         'query': query,
     })
+
+def add_room(request):
+    if request.method == 'POST':
+        form = RoomForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('staff_dashboard')
+    else:
+        form = RoomForm()
+    return render(request, 'add_room.html', {'form': form})
+
+def edit_room(request, room_id):
+    room = get_object_or_404(Room, id=room_id)
+    if request.method == 'POST':
+        form = RoomForm(request.POST, request.FILES, instance=room)
+        if form.is_valid():
+            form.save()
+            return redirect('staff_dashboard')
+    else:
+        form = RoomForm(instance=room)
+    return render(request, 'add_room.html', {'form': form, 'room': room})
+
+def delete_room(request, room_id):
+    room = get_object_or_404(Room, id=room_id)
+    room.delete()
+    return redirect('room_list')
 
 @login_required
 def booking_view(request, room_id):

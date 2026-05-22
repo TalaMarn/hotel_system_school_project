@@ -44,6 +44,35 @@
             >Rooms</a
           >
         </li>
+        {% if user.is_staff %}
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            More..
+          </a>
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" href="{% url 'add_room' %}">Add Room</a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="{% url 'room_list' %}"
+                >View Rooms</a
+              >
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a class="dropdown-item" href="{% url 'staff_dashboard' %}"
+                >Dashboard</a
+              >
+            </li>
+          </ul>
+        </li>
+        {% else %}
         <li class="nav-item">
           <a
             class="nav-link {% if request.resolver_match.url_name == 'history' %}active{% endif %}"
@@ -52,6 +81,7 @@
             >Booking History</a
           >
         </li>
+        {% endif %}
       </ul>
       {% if user.is_authenticated %}
       <span class="nav-link m-2 mb-0 mt-0" style="color: #e6b31e"

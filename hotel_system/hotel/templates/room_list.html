@@ -130,9 +130,18 @@
             <p class="card-text">Price: ${{ room.price }}</p>
           </div>
           <div class="card-footer">
+            {% if user.is_staff %}
+            <a href="{% url 'edit_room' room.id %}" class="btn btn-warning"
+              >Edit</a
+            >
+            <a href="{% url 'delete_room' room.id %}" class="btn btn-danger"
+              >Delete</a
+            >
+            {% else %}
             <a href="{% url 'booking' room.id %}" class="btn btn-warning"
               >Book Now</a
             >
+            {% endif %}
           </div>
         </div>
       </div>
@@ -171,20 +180,18 @@
             <span class="page-link" aria-hidden="true">&laquo;</span>
           </li>
           {% endif %}
-
-          {% for num in page_numbers %}
-          {% if page_obj.number == num %}
+          <p></p>
+          {% for num in page_numbers %} {% if page_obj.number == num %}
           <li class="page-item active">
             <span class="page-link">{{ num }}</span>
           </li>
           {% else %}
           <li class="page-item">
-            <a class="page-link" href="?q={{ query }}&page={{ num }}">{{ num }}</a>
+            <a class="page-link" href="?q={{ query }}&page={{ num }}"
+              >{{ num }}</a
+            >
           </li>
-          {% endif %}
-          {% endfor %}
-
-          {% if page_obj.has_next %}
+          {% endif %} {% endfor %} {% if page_obj.has_next %}
           <li class="page-item">
             <a
               class="page-link"

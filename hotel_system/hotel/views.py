@@ -6,10 +6,11 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Booking, Room
 from .forms import LoginForm, BookingForm , RegisterForm, RoomForm
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.views.decorators.http import require_POST
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import A4
@@ -18,6 +19,9 @@ from reportlab.lib.units import inch
 from reportlab.platypus import Image, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
 # Create your views here.
+
+
+staff_required = user_passes_test(lambda user: user.is_staff, login_url='customer_dashboard')
 
 # PDF Generation for Booking Slip
 def _build_booking_slip_pdf(booking):
@@ -264,10 +268,14 @@ def register_view(request):
 @login_required
 def roomList(request):
     query = request.GET.get('q', '')
+    available_only = request.GET.get('available') == '1'
     if query:
         rooms = Room.objects.filter(roomNo__icontains=query).order_by('id')
     else:
         rooms = Room.objects.all().order_by('id')
+
+    if available_only:
+        rooms = rooms.filter(isAvailable=True)
 
     paginator = Paginator(rooms, 9)
     page_number = request.GET.get('page')
@@ -281,8 +289,11 @@ def roomList(request):
         'page_obj': page_obj,
         'page_numbers': page_numbers,
         'query': query,
+        'available_only': available_only,
     })
 
+@login_required(login_url='login')
+@staff_required
 def add_room(request):
     if request.method == 'POST':
         form = RoomForm(request.POST, request.FILES)
@@ -291,8 +302,10 @@ def add_room(request):
             return redirect('staff_dashboard')
     else:
         form = RoomForm()
-    return render(request, 'add_room.html', {'form': form})
+    return render(request, 'add_room.html', {'form': form, 'is_edit': False})
 
+@login_required(login_url='login')
+@staff_required
 def edit_room(request, room_id):
     room = get_object_or_404(Room, id=room_id)
     if request.method == 'POST':
@@ -302,8 +315,11 @@ def edit_room(request, room_id):
             return redirect('staff_dashboard')
     else:
         form = RoomForm(instance=room)
-    return render(request, 'add_room.html', {'form': form, 'room': room})
+    return render(request, 'add_room.html', {'form': form, 'room': room, 'is_edit': True})
 
+@login_required(login_url='login')
+@staff_required
+@require_POST
 def delete_room(request, room_id):
     room = get_object_or_404(Room, id=room_id)
     room.delete()

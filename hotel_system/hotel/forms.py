@@ -87,4 +87,39 @@ class BookingForm(forms.ModelForm):
 class RoomForm(forms.ModelForm):
     class Meta:
         model = Room
-        fields = ['roomNo', 'roomType', 'price', 'roomPic']
+        fields = ['roomNo', 'roomType', 'price', 'roomPic', 'isAvailable']
+
+    def __init__(self,  *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['roomNo'].widget.attrs.update(
+            {
+                'class':'form-control',
+                'placeholder':'Room No'
+
+            }
+        )
+        self.fields['roomType'].widget.attrs.update(
+            {
+                'class':'form-control',
+                'placeholder':'Room Type'
+
+            }
+        )
+        self.fields['price'].widget.attrs.update(
+            {
+                'class':'form-control',
+                'placeholder':'Price'
+            }
+        )
+        self.fields['roomPic'].widget.attrs.update(
+            {
+                'class':'form-control',
+                'placeholder':'Room Picture'
+            }
+        )
+        self.fields['isAvailable'].widget.attrs.update(
+            {
+                'class':'form-check-input'
+            }
+        )

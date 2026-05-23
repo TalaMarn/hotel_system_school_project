@@ -11,8 +11,9 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
-from os import path
 from pathlib import Path
+import dj_database_url
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,7 +28,7 @@ SECRET_KEY = 'django-insecure-0xera2v13(aljrthu9+rtifq!15%ag-rhdrit*f(9trkq+tl88
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -75,16 +76,20 @@ WSGI_APPLICATION = 'hotel_system.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'hotel_system_db',
+#         'USER': 'postgres',
+#         'PASSWORD': '9102004',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'hotel_system_db',
-        'USER': 'postgres',
-        'PASSWORD': '9102004',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.parse(os.environ.get("postgresql://hotelweb_user:YupagcaTp6wsMt7P66wmeRUBiltVjJ2L@dpg-d88qifmgvqtc73bco82g-a.oregon-postgres.render.com/hotelweb"))
 }
+
 
 
 # Password validation

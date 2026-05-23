@@ -87,7 +87,7 @@ WSGI_APPLICATION = 'hotel_system.wsgi.application'
 #     }
 # }
 DATABASES = {
-    'default': dj_database_url.parse(os.environ.get("postgresql://hotelweb_user:YupagcaTp6wsMt7P66wmeRUBiltVjJ2L@dpg-d88qifmgvqtc73bco82g-a.oregon-postgres.render.com/hotelweb"))
+    'default': dj_database_url.parse(os.environ.get("postgresql://talamarn:xm4lpmW3Ttkm46xmSPnETE4530edIV8K@dpg-d88ron77f7vs73biu8q0-a.oregon-postgres.render.com/hotel_db_t4wk"))
 }
 
 

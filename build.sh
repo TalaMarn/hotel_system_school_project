@@ -3,17 +3,12 @@
 # Exit on error
 set -e
 
-echo "Starting build process..."
-
-# Install dependencies
-if [ -f "requirements.txt" ]; then
-    echo "Installing requirements..."
-    pip install -r requirements.txt
-fi
+pip install -r requirements.txt
 
 # Make migrations
 echo "Making migrations..."
 python manage.py makemigrations
+
 
 # Apply database migrations
 echo "Applying migrations..."

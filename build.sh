@@ -5,9 +5,6 @@ set -e
 
 pip install -r requirements.txt
 
-# Make migrations
-echo "Making migrations..."
-python manage.py makemigrations
 
 
 # Apply database migrations
